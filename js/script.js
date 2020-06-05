@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     //Timer
-    const deadline = '2020-06-12';
+    const deadline = '2020-06-09';
 
     function getTimeRemaining(endtime) {
         const t = Date.parse(endtime) - Date.parse(new Date()),
@@ -76,23 +76,83 @@ document.addEventListener('DOMContentLoaded', () => {
               timeInterval = setInterval(updateClock, 1000);
 
         updateClock();
-              
+        
         function updateClock() {
             const t = getTimeRemaining(endtime);
+              
 
             days.innerHTML = getZero(t.days);
             hours.innerHTML = getZero(t.hours);
             minutes.innerHTML = getZero(t.minutes);
             seconds.innerHTML = getZero(t.seconds);
-
+            
             if (t.total <= 0) {
                 clearInterval(timeInterval);
+                days.innerHTML = 'aк';
+                hours.innerHTML = 'ци';
+                minutes.innerHTML = 'йн';
+                seconds.innerHTML = 'ет';
             }
         }
-       
     }
 
     setClock('.timer', deadline);
+
+    //Modal window
+
+    const btnmodal = document.querySelectorAll('[data-modal]'),
+          modalWindow = document.querySelector('.modal'),
+          close = document.querySelector('[data-close]');
+
+        function openModal() {
+            btnmodal.forEach(item => {
+            item.addEventListener('click', () => {
+                modalWindow.classList.add('show', 'fade');
+                modalWindow.classList.remove('hide');
+                document.body.style.overflow = 'hidden';   // untouchable site
+                });
+            });
+        }
+        openModal();
+        modalWindow.addEventListener('click', (e) => {   // event on the backing
+            if (e.target === modalWindow) {
+                closeModal();
+            }
+        });
+
+        close.addEventListener('click', closeModal);
+
+        function closeModal() {
+                modalWindow.classList.remove('show');
+                modalWindow.classList.add('hide');
+                document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', (e) => {    // key connection 'Escape'
+            if (e.code === 'Escape' && modalWindow.classList.contains('show')) {
+                closeModal();
+            }
+        });
+        
+        // Modal window two - work with inLine styles
+          
+        //   function openModal(i) {             
+        //       i.forEach(item => {
+        //           item.addEventListener('click', (e) => {
+        //               e.preventDefault();
+        //               modalWindow.style.display = 'block';
+        //           });
+        //       });
+        //   }
+        //   function closeModal() {
+        //       close.addEventListener('click', e => {
+        //           e.preventDefault();
+        //         modalWindow.style.display = 'none';
+        //       });
+        //   }
+        //   openModal(btnmodal);
+        //   closeModal();
+          
 
 });
 
