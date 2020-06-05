@@ -56,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'minutes': minutes,
             'seconds': seconds
         };
-        
     }
 
     function getZero(num) {
@@ -80,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
         function updateClock() {
             const t = getTimeRemaining(endtime);
               
-
             days.innerHTML = getZero(t.days);
             hours.innerHTML = getZero(t.hours);
             minutes.innerHTML = getZero(t.minutes);
@@ -105,15 +103,16 @@ document.addEventListener('DOMContentLoaded', () => {
           close = document.querySelector('[data-close]');
 
         function openModal() {
-            btnmodal.forEach(item => {
-            item.addEventListener('click', () => {
                 modalWindow.classList.add('show', 'fade');
                 modalWindow.classList.remove('hide');
                 document.body.style.overflow = 'hidden';   // untouchable site
-                });
-            });
+                clearInterval(modalTimerId);   // excludes re-display
         }
-        openModal();
+        
+        btnmodal.forEach(item => {
+            item.addEventListener('click', openModal);
+            });
+
         modalWindow.addEventListener('click', (e) => {   // event on the backing
             if (e.target === modalWindow) {
                 closeModal();
@@ -123,9 +122,9 @@ document.addEventListener('DOMContentLoaded', () => {
         close.addEventListener('click', closeModal);
 
         function closeModal() {
-                modalWindow.classList.remove('show');
-                modalWindow.classList.add('hide');
-                document.body.style.overflow = '';
+            modalWindow.classList.remove('show');
+            modalWindow.classList.add('hide');
+            document.body.style.overflow = '';
         }
 
         document.addEventListener('keydown', (e) => {    // key connection 'Escape'
@@ -134,26 +133,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        // Modal window two - work with inLine styles
-          
-        //   function openModal(i) {             
-        //       i.forEach(item => {
-        //           item.addEventListener('click', (e) => {
-        //               e.preventDefault();
-        //               modalWindow.style.display = 'block';
-        //           });
-        //       });
-        //   }
-        //   function closeModal() {
-        //       close.addEventListener('click', e => {
-        //           e.preventDefault();
-        //         modalWindow.style.display = 'none';
-        //       });
-        //   }
-        //   openModal(btnmodal);
-        //   closeModal();
-          
+        const modalTimerId = setTimeout(openModal, 5000); // open modal window after 5s
+        
+        //Show modal window by scroll
+        //expanation example
+        // function showModalByScroll() {
+        //     let i = window.pageYOffset,                        //  scrolled part by client
+        //         e = document.documentElement.clientHeight,    //  visible part
+        //         t = document.documentElement.scrollHeight;    // client scroll height - full height page
+                
+        //     if (i + e >= t) {
+        //         openModal();
+        //         window.removeEventListener('scroll', showModalByScroll); // disable event handler
+        //     }
+        // }
+        // window.addEventListener('scroll', showModalByScroll);
 
+        // working version
+        function showModalByScroll() {
+            if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+                openModal();
+                window.removeEventListener('scroll', showModalByScroll);
+            }
+        }
+        window.addEventListener('scroll', showModalByScroll);
+            
 });
 
 
