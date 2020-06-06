@@ -1,3 +1,5 @@
+//"use strict";
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // Tabs
@@ -133,32 +135,72 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        const modalTimerId = setTimeout(openModal, 5000); // open modal window after 5s
+        //const modalTimerId = setTimeout(openModal, 5000); // open modal window after 5s
         
-        //Show modal window by scroll
-        //expanation example
-        // function showModalByScroll() {
-        //     let i = window.pageYOffset,                        //  scrolled part by client
-        //         e = document.documentElement.clientHeight,    //  visible part
-        //         t = document.documentElement.scrollHeight;    // client scroll height - full height page
-                
-        //     if (i + e >= t) {
-        //         openModal();
-        //         window.removeEventListener('scroll', showModalByScroll); // disable event handler
-        //     }
-        // }
-        // window.addEventListener('scroll', showModalByScroll);
-
-        // working version
         function showModalByScroll() {
             if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
                 openModal();
                 window.removeEventListener('scroll', showModalByScroll);
             }
         }
-        window.addEventListener('scroll', showModalByScroll);
-            
+        //window.addEventListener('scroll', showModalByScroll);
+        
+
+        // Used class for cards
+
+        class MenuCard {
+            constructor(src, alt, title, descr, price, parentSelector) {
+                this.src = src;
+                this.alt = alt;
+                this.title = title;
+                this.descr = descr;
+                this.price = price;
+                this.parent = document.querySelector(parentSelector);
+                this.transfer = 27;
+                this.changeToUAH();
+            }
+
+            changeToUAH() {
+                this.price = this.price * this.transfer;
+            }
+
+            render() {
+                const element = document.createElement('div');
+                element.innerHTML =  `
+                    <div class="menu__item">
+                        <img src="${this.src}" alt="${this.alt}">
+                        <h3 class="menu__item-subtitle">Меню “${this.title}”</h3>
+                        <div class="menu__item-descr">В меню “${this.title}” ${this.descr}
+                        </div>
+                        <div class="menu__item-divider"></div>
+                        <div class="menu__item-price">
+                            <div class="menu__item-cost">Цена:</div>
+                            <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                        </div>
+                    </div>
+                `;
+                this.parent.append(element);
+            }
+        }
+
+
+        new MenuCard(
+             "https://f1.ds-ua.net/u_dirs/002/2659/0d03f55d7a5632e1f9ae2ecc19da8c15.jpg", 
+             "vegy",
+             "Ожиряшка",
+            ",мы используем не только много майонеза и жира как наполнитель, но и качественное сало как украшение, которое кстати при этом не содержит  ни капли мяса - это самое белое меню",
+            23,
+            ".menu .container"
+        ).render();
+        new MenuCard(
+            "https://c7.hotpng.com/preview/521/365/115/earthworms-wikia-digital-pet-others.jpg", 
+            "vegy",
+            "Букашка",
+           ",мы используем не только много жуков и  и мух как наполнитель, но и толстых дождевых червей как украшение, которое кстати при этом содержат много земли при минимуму каллорий  - это самое землистое меню",
+           22,
+           ".menu .container"
+       ).render();
+
+          
 });
-
-
 
