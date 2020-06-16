@@ -226,10 +226,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ).render();
 
             //Forms
-    const forms = document.querySelectorAll('form');
+        const forms = document.querySelectorAll('form');
 
     const message = {
-        loading: 'Загрузка',
+        loading: 'img/form/spinner.svg',   //prescribe the path to the spinner
         success: 'Спасибо! Скоро мы с вами свяжемся',
         failure: 'Что-то пошло не так...'
     };
@@ -242,15 +242,14 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const statusMessage = document.createElement('div');
-            statusMessage.classList.add('status');
-            statusMessage.textContent = message.loading;
-            form.append(statusMessage);
+            const statusMessage = document.createElement('img'); // redo the picture
+            statusMessage.src = message.loading;
+            statusMessage.style.cssText = `    
+                display: block;
+                margin: 0 auto;
+            `;
+            form.insertAdjacentElement('afterend', statusMessage);  // change the append method
 
-            const request = new XMLHttpRequest();
-            request.open('POST', 'server.php');
-
-            request.setRequestHeader('Content-type', 'application/json');
             const formData = new FormData(form);
 
             const object = {};
@@ -258,24 +257,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 object[key] = value;
             });
 
-            const json = JSON.stringify(object);
 
-            request.send(json);
-
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    console.log(request.response);
-                    statusMessage.textContent = message.success;
-                    form.reset();  // cleaning forms
-                    setTimeout(() => {
-                        statusMessage.remove();
-                    }, 3000);
-                } else {
-                    statusMessage.textContent = message.failure;
-                }
+            fetch('server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/text'
+                },
+                body: JSON.stringify(object)
+            })
+            .then(data => data.text())
+            .then(data => { 
+                console.log(data);
+                showThanksModal(message.success);    // call the new method
+                statusMessage.remove();
+            }).catch(() => {
+                showThanksModal(message.failure);
+                console.log('catch');
+            }).finally(() => {
+                form.reset();
+                console.log('finally');
             });
+
         });
-    }
           
 });
 
